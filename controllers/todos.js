@@ -20,6 +20,32 @@ class todoController {
         })
     }
 
+    updateTodo(req, res) {
+        const taskId = req.params.id;
+
+        const updatedTask = req.body.task;
+
+        const taskIndex = this.TODOS.findIndex((todo) => (todo.id === taskId))
+
+        if (taskIndex < 0) {
+            res.json({
+                message: 'Could not find todo with this id.'
+            })
+
+            throw new Error('Could not find todo with this id.')
+        }
+
+        this.TODOS[taskIndex] = new Todo(this.TODOS[taskIndex].id, updatedTask)
+
+        console.log(updatedTask)
+
+        res.json({
+            message: 'Updated task!',
+            updatedTask: updatedTask
+        })
+    }   
+
+
     getTodos(req, res) {
         return res.json({tasks: this.TODOS})
     }
