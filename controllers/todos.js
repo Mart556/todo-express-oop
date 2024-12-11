@@ -45,6 +45,26 @@ class todoController {
         })
     }   
 
+    deleteTodo(req, res) {
+        const taskId = req.params.id;
+
+        const taskIndex = this.TODOS.findIndex((todo) => (todo.id === taskId))
+
+        if (taskIndex < 0) {
+            res.json({
+                message: 'Could not find todo with this id.'
+            })
+
+            throw new Error('Could not find todo with this id.')
+        }
+
+        this.TODOS.splice(taskIndex, 1)
+
+        res.json({
+            message: 'Deleted task!',
+        })
+    }   
+
 
     getTodos(req, res) {
         return res.json({tasks: this.TODOS})
