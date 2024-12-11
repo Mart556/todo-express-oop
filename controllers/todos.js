@@ -1,11 +1,16 @@
 import { Todo } from "../models/todo.js";
+import { fileManager } from "../files.js";
 
 class todoController {
     constructor() {
-        this.TODOS = []
+        this.initTodos()
     }
 
-    createTodo(req, res) {
+    async initTodos() {
+        this.TODOS = await fileManager.readFile('./data/tasks.json')
+    }
+
+    async createTodo(req, res) {
         const taskName = req.body.task;
 
         if (taskName === '') return console.log('Task cannot be empty string.')
@@ -14,13 +19,15 @@ class todoController {
 
         this.TODOS.push(newTodo)
 
+        await fileManager.writeFile('./data/tasks.json', this.TODOS)
+
         res.json({
             message: 'Create a new todo',
             newTask: newTodo
         })
     }
 
-    updateTodo(req, res) {
+    async updateTodo(req, res) {
         const taskId = req.params.id;
 
         const updatedTask = req.body.task;
@@ -37,7 +44,7 @@ class todoController {
 
         this.TODOS[taskIndex] = new Todo(this.TODOS[taskIndex].id, updatedTask)
 
-        console.log(updatedTask)
+        await fileManager.writeFile('./data/tasks.json', this.TODOS)
 
         res.json({
             message: 'Updated task!',
@@ -45,7 +52,7 @@ class todoController {
         })
     }   
 
-    deleteTodo(req, res) {
+    async deleteTodo(req, res) {
         const taskId = req.params.id;
 
         const taskIndex = this.TODOS.findIndex((todo) => (todo.id === taskId))
@@ -59,6 +66,8 @@ class todoController {
         }
 
         this.TODOS.splice(taskIndex, 1)
+
+        await fileManager.writeFile('./data/tasks.json', this.TODOS)
 
         res.json({
             message: 'Deleted task!',
